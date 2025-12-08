@@ -14,8 +14,6 @@
     <Folder Include="AutoMapper\" />
     <Folder Include="Models\" />
     <Folder Include="Areas\" />
-    <Folder Include="ViewModels\" />
-    <Folder Include="Views\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
@@ -25,6 +23,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
