@@ -9,6 +9,5 @@ namespace WebCommerce.App.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options) { }
-        public DbSet<WebCommerce.App.ViewModels.ProductViewModel> ProductViewModel { get; set; } = default!;
     }
 }
