@@ -1,5 +1,8 @@
-﻿using System.ComponentModel;
+﻿using AutoMapper;
+using AutoMapper.Configuration.Annotations;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using WebCommerce.Business.Models;
 
 namespace WebCommerce.App.ViewModels
 {
@@ -7,6 +10,10 @@ namespace WebCommerce.App.ViewModels
     {
         [Key]
         public Guid Id { get; set; }
+
+        [Required(ErrorMessage = "The {0} field is required")]
+        [DisplayName("Provider")]
+        public Guid ProviderId { get; set; }
 
         [Required(ErrorMessage = "The {0} field is required")]
         [StringLength(200, ErrorMessage = "The {0} field must contain between {2} and {1} characters", MinimumLength = 2)]
@@ -17,6 +24,8 @@ namespace WebCommerce.App.ViewModels
         public string Description { get; set; }
 
         public string Image { get; set; }
+
+        [DisplayName("Product Image")]
         public IFormFile ImageUpload { get; set; }
 
         [Required(ErrorMessage = "The {0} field is required")]
@@ -29,5 +38,7 @@ namespace WebCommerce.App.ViewModels
         public bool Active { get; set; }
 
         public ProviderViewModel Provider { get; set; }
+
+        public IEnumerable<ProviderViewModel> Providers { get; set; }
     }
 }

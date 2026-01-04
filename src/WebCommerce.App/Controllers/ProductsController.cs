@@ -40,7 +40,7 @@ namespace WebCommerce.App.Controllers
 
         public async Task<IActionResult> Create()
         {
-            var productViewModel = PopulateProviders(new ProductViewModel());
+            var productViewModel = await PopulateProviders(new ProductViewModel());
             return View(productViewModel);
         }
 
@@ -52,9 +52,17 @@ namespace WebCommerce.App.Controllers
 
             if (!ModelState.IsValid) return View(productViewModel);
 
+            var imgPrefix = Guid.NewGuid() + "_";
+
+            if (! await UploadFile(productViewModel.ImageUpload, imgPrefix))
+            {
+                return View(productViewModel);
+            }
+
+            productViewModel.Image = imgPrefix + productViewModel.ImageUpload.FileName;
             await _productRepository.Add(_mapper.Map<Product>(productViewModel));
 
-            return View(productViewModel);
+            return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> Edit(Guid id)
@@ -75,9 +83,31 @@ namespace WebCommerce.App.Controllers
         {
             if (id != productViewModel.Id) return NotFound();
 
+            var product = await GetProduct(id);
+
+            productViewModel.Provider = product.Provider;
+            productViewModel.Image = product.Image;
+
             if (!ModelState.IsValid) return View(productViewModel);
 
-            await _productRepository.Update(_mapper.Map<Product>(productViewModel));
+            if (productViewModel.ImageUpload != null)
+            {
+                var imgPrefix = Guid.NewGuid() + "_";
+
+                if (!await UploadFile(productViewModel.ImageUpload, imgPrefix))
+                {
+                    return View(productViewModel);
+                }
+
+                product.Image = imgPrefix + productViewModel.ImageUpload.FileName;
+            }
+
+            product.Name = productViewModel.Name;
+            product.Description = productViewModel.Description;
+            product.Value = productViewModel.Value;
+            product.Active = productViewModel.Active;
+
+            await _productRepository.Update(_mapper.Map<Product>(product));
 
             return RedirectToAction(nameof(Index));
         }
@@ -120,6 +150,26 @@ namespace WebCommerce.App.Controllers
         {
             product.Providers = _mapper.Map<IEnumerable<ProviderViewModel>>(await _providerRepository.GetAll());
             return product;
+        }
+
+        private async Task<bool> UploadFile(IFormFile file, string imgPrefix)
+        {
+            if (file.Length <= 0) return false;
+
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", imgPrefix + file.FileName);
+
+            if (System.IO.File.Exists(path))
+            {
+                ModelState.AddModelError(string.Empty, "A file with that name already exists!");
+                return false;
+            }
+
+            using (var stream = new FileStream(path, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            return true;
         }
     }
 }
