@@ -2,6 +2,7 @@
 using AutoMapper.Configuration.Annotations;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using WebCommerce.App.Extensions;
 using WebCommerce.Business.Models;
 
 namespace WebCommerce.App.ViewModels
@@ -28,6 +29,7 @@ namespace WebCommerce.App.ViewModels
         [DisplayName("Product Image")]
         public IFormFile ImageUpload { get; set; }
 
+        [Currency]
         [Required(ErrorMessage = "The {0} field is required")]
         public decimal Value { get; set; }
 
