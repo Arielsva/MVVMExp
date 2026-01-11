@@ -1,6 +1,6 @@
 ﻿namespace WebCommerce.Business.Models
 {
-    public enum ProviderType
+    public enum PersonType
     {
         Individual = 1,
         Company
