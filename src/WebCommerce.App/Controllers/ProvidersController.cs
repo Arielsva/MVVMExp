@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.DotNet.Scaffolding.Shared;
 using WebCommerce.App.ViewModels;
 using WebCommerce.Business.Interfaces;
 using WebCommerce.Business.Models;
@@ -9,12 +10,14 @@ namespace WebCommerce.App.Controllers
     public class ProvidersController : BaseController
     {
         private readonly IProviderRepository _providerRepository;
+        private readonly IAddressRepository _addressRepository;
         private readonly IMapper _mapper;
 
-        public ProvidersController(IProviderRepository providerRepository, IMapper mapper)
+        public ProvidersController(IProviderRepository providerRepository, IMapper mapper, IAddressRepository addressRepository)
         {
             _providerRepository = providerRepository;
             _mapper = mapper;
+            _addressRepository = addressRepository;
         }
 
         public async Task<IActionResult> Index()
@@ -91,6 +94,40 @@ namespace WebCommerce.App.Controllers
             await _providerRepository.Remove(id);
 
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> GetAddress(Guid id)
+        {
+            var provider = await GetProviderAddress(id);
+
+            if (provider == null) return NotFound();
+
+            return PartialView("_AddressDetails", provider);
+        }
+
+        public async Task<IActionResult> UpdateAddress(Guid id)
+        {
+            var provider = await GetProviderAddress(id);
+
+            if (provider == null) return NotFound();
+
+            return PartialView("_AddressUpdate", new ProviderViewModel { Address = provider.Address});
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateAddress(ProviderViewModel providerViewModel)
+        {
+            ModelState.Remove("Name");
+            ModelState.Remove("Document");
+
+            if (!ModelState.IsValid) return PartialView("_AddressUpdate", providerViewModel);
+
+            await _addressRepository.Update(_mapper.Map<Address>(providerViewModel.Address));
+
+            var url = Url.Action("GetAddress", "Providers", new { id = providerViewModel.Address.ProviderId });
+
+            return Json(new { success = true, url });
         }
 
         private async Task<ProviderViewModel> GetProviderAddress(Guid id)

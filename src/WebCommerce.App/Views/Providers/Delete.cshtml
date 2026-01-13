@@ -1,14 +1,14 @@
-﻿@model WebCommerce.App.ViewModels.ProviderViewModel
+﻿@using WebCommerce.App.Extensions
+@model WebCommerce.App.ViewModels.ProviderViewModel
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Delete Provider";
 }
 
-<h1>Delete</h1>
+<h1>@ViewData["Title"]</h1>
 
-<h3>Are you sure you want to delete this?</h3>
 <div>
-    <h4>ProviderViewModel</h4>
+    <h4>Are you sure you want to delete this? This action will be permanent!</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -21,13 +21,7 @@
             @Html.DisplayNameFor(model => model.Document)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Document)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ProviderType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ProviderType)
+            @this.FormatDocument(Model.ProviderType, Model.Document)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Active)
@@ -39,7 +33,11 @@
     
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <input type="submit" value="Delete" class="btn btn-danger" />
+        <a class="btn btn-info" asp-action="Index">Back to List</a>
     </form>
+</div>
+
+<div>
+    <partial name="_AddressDetails" />
 </div>
