@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.Extensions.Localization;
 using System.ComponentModel.DataAnnotations;
-using System.Data;
 using System.Globalization;
 
 namespace WebCommerce.App.Extensions
