@@ -56,14 +56,20 @@ namespace WebCommerce.App.Controllers
 
             if (!ModelState.IsValid) return View(productViewModel);
 
-            var imgPrefix = Guid.NewGuid() + "_";
-
-            if (! await UploadFile(productViewModel.ImageUpload, imgPrefix))
+            if (productViewModel.ImageUpload != null)
             {
-                return View(productViewModel);
+                var imgPrefix = Guid.NewGuid() + "_";
+
+                if (!await UploadFile(productViewModel.ImageUpload, imgPrefix))
+                {
+                    return View(productViewModel);
+                }
+
+                productViewModel.Image = imgPrefix + productViewModel.ImageUpload.FileName;
             }
 
-            productViewModel.Image = imgPrefix + productViewModel.ImageUpload.FileName;
+            productViewModel.RegistrationDate = DateTime.UtcNow;
+
             await _productService.Add(_mapper.Map<Product>(productViewModel));
 
             if (!ValidOperation()) return View(productViewModel);
