@@ -10,14 +10,18 @@ namespace WebCommerce.App.Controllers
     {
         private readonly IProductRepository _productRepository;
         private readonly IProviderRepository _providerRepository;
+        private readonly IProductService _productService;
         private readonly IMapper _mapper;
 
         public ProductsController(IProductRepository productRepository,
                                   IProviderRepository providerRepository,
-                                  IMapper mapper)
+                                  IProductService productService,
+                                  IMapper mapper,
+                                  INotifier notifier) : base(notifier)
         {
             _productRepository = productRepository;
             _providerRepository = providerRepository;
+            _productService = productService;
             _mapper = mapper;
         }
 
@@ -60,7 +64,9 @@ namespace WebCommerce.App.Controllers
             }
 
             productViewModel.Image = imgPrefix + productViewModel.ImageUpload.FileName;
-            await _productRepository.Add(_mapper.Map<Product>(productViewModel));
+            await _productService.Add(_mapper.Map<Product>(productViewModel));
+
+            if (!ValidOperation()) return View(productViewModel);
 
             return RedirectToAction("Index");
         }
@@ -107,7 +113,9 @@ namespace WebCommerce.App.Controllers
             product.Value = productViewModel.Value;
             product.Active = productViewModel.Active;
 
-            await _productRepository.Update(_mapper.Map<Product>(product));
+            await _productService.Update(_mapper.Map<Product>(product));
+
+            if (!ValidOperation()) return View(productViewModel);
 
             return RedirectToAction(nameof(Index));
         }
@@ -135,7 +143,11 @@ namespace WebCommerce.App.Controllers
                 return NotFound();
             }
 
-            await _productRepository.Remove(id);
+            await _productService.Remove(id);
+
+            if (!ValidOperation()) return View(product);
+
+            TempData["Success"] = "Product successfully deleted!";
 
             return RedirectToAction(nameof(Index));
         }

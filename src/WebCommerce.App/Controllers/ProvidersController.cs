@@ -10,14 +10,17 @@ namespace WebCommerce.App.Controllers
     public class ProvidersController : BaseController
     {
         private readonly IProviderRepository _providerRepository;
-        private readonly IAddressRepository _addressRepository;
+        private readonly IProviderService _providerService;
         private readonly IMapper _mapper;
 
-        public ProvidersController(IProviderRepository providerRepository, IMapper mapper, IAddressRepository addressRepository)
+        public ProvidersController(IProviderRepository providerRepository,
+                                   IProviderService providerService,
+                                   IMapper mapper,
+                                   INotifier notifier) : base(notifier)
         {
             _providerRepository = providerRepository;
             _mapper = mapper;
-            _addressRepository = addressRepository;
+            _providerService = providerService;
         }
 
         public async Task<IActionResult> Index()
@@ -46,7 +49,9 @@ namespace WebCommerce.App.Controllers
             if (!ModelState.IsValid) return View(providerViewModel);
 
             var provider = _mapper.Map<Provider>(providerViewModel);
-            await _providerRepository.Add(provider);
+            await _providerService.Add(provider);
+
+            if (!ValidOperation()) return View(providerViewModel);
 
             return RedirectToAction(nameof(Index));
         }
@@ -69,7 +74,9 @@ namespace WebCommerce.App.Controllers
             if (!ModelState.IsValid) return View(providerViewModel);
 
             var provider = _mapper.Map<Provider>(providerViewModel);
-            await _providerRepository.Update(provider);
+            await _providerService.Update(provider);
+
+            if (!ValidOperation()) return View(await GetProviderProductsAddress(id));
 
             return RedirectToAction(nameof(Index));
         }
@@ -91,7 +98,9 @@ namespace WebCommerce.App.Controllers
 
             if (providerViewModel == null) return NotFound();
 
-            await _providerRepository.Remove(id);
+            await _providerService.Remove(id);
+
+            if (!ValidOperation()) return View(providerViewModel);
 
             return RedirectToAction(nameof(Index));
         }
@@ -123,7 +132,9 @@ namespace WebCommerce.App.Controllers
 
             if (!ModelState.IsValid) return PartialView("_AddressUpdate", providerViewModel);
 
-            await _addressRepository.Update(_mapper.Map<Address>(providerViewModel.Address));
+            await _providerService.UpdateAddress(_mapper.Map<Address>(providerViewModel.Address));
+
+            if (!ValidOperation()) return PartialView("_AddressUpdate", providerViewModel);
 
             var url = Url.Action("GetAddress", "Providers", new { id = providerViewModel.Address.ProviderId });
 
