@@ -4,6 +4,8 @@
     {
         public static IServiceCollection AddMvcConfiguration(this IServiceCollection services)
         {
+            services.AddControllersWithViews();
+
             services.AddRazorPages();
 
             return services;

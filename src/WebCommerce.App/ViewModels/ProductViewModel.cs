@@ -1,9 +1,6 @@
-﻿using AutoMapper;
-using AutoMapper.Configuration.Annotations;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using WebCommerce.App.Extensions;
-using WebCommerce.Business.Models;
 
 namespace WebCommerce.App.ViewModels
 {

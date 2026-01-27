@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.DotNet.Scaffolding.Shared;
+using WebCommerce.App.Extensions;
 using WebCommerce.App.ViewModels;
 using WebCommerce.Business.Interfaces;
 using WebCommerce.Business.Models;
 
 namespace WebCommerce.App.Controllers
 {
+    [Authorize]
     public class ProvidersController : BaseController
     {
         private readonly IProviderRepository _providerRepository;
@@ -23,11 +25,13 @@ namespace WebCommerce.App.Controllers
             _providerService = providerService;
         }
 
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             return View(_mapper.Map<IEnumerable<ProviderViewModel>>(await _providerRepository.GetAll()));
         }
 
+        [ClaimsAuthorize("Provider", "R")]
         public async Task<IActionResult> Details(Guid id)
         {
             var providerViewModel = await GetProviderAddress(id);
@@ -37,11 +41,13 @@ namespace WebCommerce.App.Controllers
             return View(providerViewModel);
         }
 
+        [ClaimsAuthorize("Provider", "C")]
         public ActionResult Create()
         {
             return View();
         }
 
+        [ClaimsAuthorize("Provider", "C")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProviderViewModel providerViewModel)
@@ -56,6 +62,7 @@ namespace WebCommerce.App.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [ClaimsAuthorize("Provider", "U")]
         public async Task<ActionResult> Edit(Guid id)
         {
             var providerViewModel = await GetProviderProductsAddress(id);
@@ -65,6 +72,7 @@ namespace WebCommerce.App.Controllers
             return View(providerViewModel);
         }
 
+        [ClaimsAuthorize("Provider", "U")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(Guid id, ProviderViewModel providerViewModel)
@@ -81,6 +89,7 @@ namespace WebCommerce.App.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [ClaimsAuthorize("Provider", "D")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var providerViewModel = await GetProviderAddress(id);
@@ -90,6 +99,7 @@ namespace WebCommerce.App.Controllers
             return View(providerViewModel);
         }
 
+        [ClaimsAuthorize("Provider", "D")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
@@ -105,6 +115,7 @@ namespace WebCommerce.App.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [AllowAnonymous]
         public async Task<IActionResult> GetAddress(Guid id)
         {
             var provider = await GetProviderAddress(id);
@@ -114,6 +125,7 @@ namespace WebCommerce.App.Controllers
             return PartialView("_AddressDetails", provider);
         }
 
+        [ClaimsAuthorize("Provider", "U")]
         public async Task<IActionResult> UpdateAddress(Guid id)
         {
             var provider = await GetProviderAddress(id);
@@ -123,6 +135,7 @@ namespace WebCommerce.App.Controllers
             return PartialView("_AddressUpdate", new ProviderViewModel { Address = provider.Address});
         }
 
+        [ClaimsAuthorize("Provider", "U")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateAddress(ProviderViewModel providerViewModel)

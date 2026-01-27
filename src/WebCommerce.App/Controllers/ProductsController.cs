@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WebCommerce.App.Extensions;
 using WebCommerce.App.ViewModels;
 using WebCommerce.Business.Interfaces;
 using WebCommerce.Business.Models;
 
 namespace WebCommerce.App.Controllers
 {
+    [Authorize]
     public class ProductsController : BaseController
     {
         private readonly IProductRepository _productRepository;
@@ -25,11 +28,14 @@ namespace WebCommerce.App.Controllers
             _mapper = mapper;
         }
 
+
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             return View(_mapper.Map<IEnumerable<ProductViewModel>>(await _productRepository.GetProductsProviders()));
         }
 
+        [ClaimsAuthorize("Product", "R")]
         public async Task<IActionResult> Details(Guid id)
         {
             var productViewModel = await GetProduct(id);
@@ -42,12 +48,14 @@ namespace WebCommerce.App.Controllers
             return View(productViewModel);
         }
 
+        [ClaimsAuthorize("Product", "C")]
         public async Task<IActionResult> Create()
         {
             var productViewModel = await PopulateProviders(new ProductViewModel());
             return View(productViewModel);
         }
 
+        [ClaimsAuthorize("Product", "C")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProductViewModel productViewModel)
@@ -77,6 +85,7 @@ namespace WebCommerce.App.Controllers
             return RedirectToAction("Index");
         }
 
+        [ClaimsAuthorize("Product", "U")]
         public async Task<IActionResult> Edit(Guid id)
         {
             var productViewModel = await GetProduct(id);
@@ -89,6 +98,7 @@ namespace WebCommerce.App.Controllers
             return View(productViewModel);
         }
 
+        [ClaimsAuthorize("Product", "U")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, ProductViewModel productViewModel)
@@ -126,6 +136,7 @@ namespace WebCommerce.App.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [ClaimsAuthorize("Product", "D")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var product = await GetProduct(id);
@@ -138,6 +149,7 @@ namespace WebCommerce.App.Controllers
             return View(product);
         }
 
+        [ClaimsAuthorize("Product", "D")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
