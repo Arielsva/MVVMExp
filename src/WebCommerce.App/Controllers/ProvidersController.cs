@@ -49,7 +49,6 @@ namespace WebCommerce.App.Controllers
 
         [ClaimsAuthorize("Provider", "C")]
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProviderViewModel providerViewModel)
         {
             if (!ModelState.IsValid) return View(providerViewModel);
@@ -74,7 +73,6 @@ namespace WebCommerce.App.Controllers
 
         [ClaimsAuthorize("Provider", "U")]
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(Guid id, ProviderViewModel providerViewModel)
         {
             if (id != providerViewModel.Id) return NotFound();
@@ -101,7 +99,6 @@ namespace WebCommerce.App.Controllers
 
         [ClaimsAuthorize("Provider", "D")]
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var providerViewModel = await GetProviderAddress(id);
@@ -137,7 +134,6 @@ namespace WebCommerce.App.Controllers
 
         [ClaimsAuthorize("Provider", "U")]
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateAddress(ProviderViewModel providerViewModel)
         {
             ModelState.Remove("Name");

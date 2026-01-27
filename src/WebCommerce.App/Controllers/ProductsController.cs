@@ -57,7 +57,6 @@ namespace WebCommerce.App.Controllers
 
         [ClaimsAuthorize("Product", "C")]
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProductViewModel productViewModel)
         {
             productViewModel = await PopulateProviders(productViewModel);
@@ -100,7 +99,6 @@ namespace WebCommerce.App.Controllers
 
         [ClaimsAuthorize("Product", "U")]
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, ProductViewModel productViewModel)
         {
             if (id != productViewModel.Id) return NotFound();
@@ -151,7 +149,6 @@ namespace WebCommerce.App.Controllers
 
         [ClaimsAuthorize("Product", "D")]
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var product = await GetProduct(id);
