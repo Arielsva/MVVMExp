@@ -1,0 +1,16 @@
+﻿@model IEnumerable<WebCommerce.App.ViewModels.ProductViewModel>
+
+@{
+    ViewData["Title"] = "Products List";
+}
+
+<h1>@ViewData["Title"]</h1>
+<hr />
+
+<vc:Summary></vc:Summary>
+
+<p>
+    <a class="btn btn-info" asp-action="Create">New Product</a>
+</p>
+
+<partial name="_ProductList" />

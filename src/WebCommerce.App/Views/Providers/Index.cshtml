@@ -1,0 +1,52 @@
+﻿@using WebCommerce.App.Extensions
+@model IEnumerable<WebCommerce.App.ViewModels.ProviderViewModel>
+
+@{
+    ViewData["Title"] = "Provider's List";
+}
+
+<h1>@ViewData["Title"]</h1>
+<hr />
+
+<vc:Summary></vc:Summary>
+
+<p supress-by-claim-name="Provider" supress-by-claim-value="">
+    <a class="btn btn-info" asp-action="Create">New Provider</a>
+</p>
+<table class="table table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Document)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Active)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @this.FormatDocument(item.ProviderType, item.Document)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Active)
+                </td>
+                <td class="text-end">
+                    <a class="btn btn-info" supress-by-claim-name="Provider" supress-by-claim-value="R" asp-action="Details" asp-route-id="@item.Id"><span class="fa fa-search"></span></a>
+                    <a class="btn btn-warning" disable-by-claim-name="Provider" disable-by-claim-value="U" asp-action="Edit" asp-route-id="@item.Id"><span class="fa fa-pencil-alt"></span></a>
+                    <a class="btn btn-danger" supress-by-claim-name="Provider" supress-by-claim-value="D" asp-action="Delete" asp-route-id="@item.Id"><span class="fa fa-trash"></span></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

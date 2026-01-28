@@ -1,0 +1,31 @@
+﻿@model WebCommerce.App.ViewModels.ProviderViewModel
+
+@{
+    ViewData["Title"] = "Update Address";
+}
+
+<div class="modal-header">
+    <h4 class="modal-title">@ViewData["Title"]</h4>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" data-dismiss="modal"></button>
+</div>
+
+<form asp-action="UpdateAddress">
+    <div class="modal-body">
+        <input type="hidden" asp-for="Address.ProviderId" />
+        <input type="hidden" asp-for="Address.Id" />
+
+        <partial name="_Address" />
+
+        <div class="modal-footer">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Update Address" class="btn btn-success" />
+                <input type="button" class="btn btn-info" value="Close" data-bs-dismiss="modal" />
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<script>
+    SearchZipCode();
+</script>
